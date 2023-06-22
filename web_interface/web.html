@@ -25,7 +25,7 @@
         const cameraStream = document.getElementById('cameraStream');
 
         // Fetch available cameras on page load
-        axios.get('/cameras').then(response => {
+        axios.get('http://localhost:8080/cameras').then(response => {
             response.data.forEach(camera => {
                 const option = document.createElement('option');
                 option.text = camera;
@@ -36,7 +36,7 @@
         // Enable or disable camera when checkbox is clicked
         enableCamera.addEventListener('change', () => {
             if (enableCamera.checked) {
-                axios.post(`/start_camera/${cameraSelect.value}`).then(() => {
+                axios.post(`http://localhost:8080/start_camera/${cameraSelect.value}`).then(() => {
                     cameraStream.src = `/stream/${cameraSelect.value}`;
                 });
             } else {
@@ -47,7 +47,7 @@
         // Enable or disable tracking when checkbox is clicked
         enableTracking.addEventListener('change', () => {
             if (enableTracking.checked) {
-                axios.post(`/start_tracking/${cameraSelect.value}`);
+                axios.post(`http://localhost:8080/start_tracking/${cameraSelect.value}`);
             }
         });
     </script>

@@ -1,13 +1,12 @@
 import cv2
-from queue import Queue
 import threading
+from .shared_variables import SharedVariables
 
 class CameraLoop:
-    def __init__(self, shared_vars):
+    def __init__(self, shared_vars: SharedVariables):
         self.shared_vars = shared_vars
         self.cameras = self._detect_cameras()
         self.current_camera = None
-        self.frame_queue = Queue()
         
         self.processing_thread = threading.Thread(target=self._process_frames)
         self.processing_thread.daemon = True
@@ -37,7 +36,7 @@ class CameraLoop:
         # would depend on the library and hardware being used
         ret, frame = self.current_camera.read()
         if ret:
-            self.frame_queue.put(frame)
+            self.shared_vars.frame_queue.put(frame)
 
     def start_camera(self, camera_id):
         """Start selected camera"""
