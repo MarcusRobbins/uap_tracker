@@ -1,21 +1,47 @@
 from multiprocessing import Value, Queue, Lock
-from queue import Full
+from queue import Full, Empty
 
-from queue import Queue, Full
+# from queue import Queue, Full
 
-class DropOldQueue(Queue):
+# class DropOldQueue(Queue):
+#     def __init__(self, maxsize):
+#         super().__init__(maxsize)
+
+#     def put(self, item, *, block=True, timeout=None):
+#         # Override put method
+#         while True:
+#             try:
+#                 Queue.put(self, item, block=block, timeout=timeout)
+#                 break
+#             except Full:
+#                 # If queue is full, remove an item and try again
+#                 self.get()
+
+class DropOldQueue:
     def __init__(self, maxsize):
-        super().__init__(maxsize)
+        self.queue = Queue(maxsize)
 
-    def put(self, item, *, block=True, timeout=None):
+    def put(self, obj, block=True):
         # Override put method
         while True:
             try:
-                Queue.put(self, item, block=block, timeout=timeout)
+                self.queue.put(obj, block)
                 break
             except Full:
                 # If queue is full, remove an item and try again
-                self.get()
+                try:
+                    self.queue.get_nowait()
+                except Empty:
+                    pass
+
+    def get(self, block=True):
+        return self.queue.get(block)
+
+    def get_nowait(self):
+        return self.queue.get_nowait()
+    
+    def empty(self):
+        return self.queue.empty()
 
 
 class SharedVariables:
@@ -29,6 +55,7 @@ class SharedVariables:
         self._frame_queue = DropOldQueue(maxsize=queue_limit)
         self._tracking_queue = DropOldQueue(maxsize=queue_limit)
         self._filtered_tracking_queue = DropOldQueue(maxsize=queue_limit)
+        self._filtered_frame_queue = DropOldQueue(maxsize=queue_limit)
 
     @property
     def camera_enabled(self):
@@ -80,3 +107,9 @@ class SharedVariables:
     @property
     def filtered_tracking_queue(self):
         return self._filtered_tracking_queue
+
+    @property
+    def filtered_frame_queue(self):
+        return self._filtered_frame_queue
+    
+    

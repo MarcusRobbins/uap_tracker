@@ -17,16 +17,16 @@ class TrackRankingAndStorage:
                     # Get track from shared variables queue
                     track = self.shared_vars._tracking_queue.get_nowait()
                     
-                    # Rank the track
-                    ranked_track = self.rank_track(track)
+                    # # Rank the track
+                    # ranked_track = self.rank_track(track)
                     
-                    # Save to SQLite database
-                    self.save_to_db(ranked_track)
+                    # # Save to SQLite database
+                    # self.save_to_db(ranked_track)
 
-                    # If the track's rank is above a certain threshold, add it to the 
-                    # high_ranking_tracks queue in shared variables
-                    if ranked_track['rank'] > self.shared_vars.ranking_threshold:
-                        self.shared_vars.filtered_tracking_queue.put(ranked_track)
+                    # # If the track's rank is above a certain threshold, add it to the 
+                    # # high_ranking_tracks queue in shared variables
+                    # if ranked_track['rank'] > self.shared_vars.ranking_threshold:
+                    #     self.shared_vars.filtered_tracking_queue.put(ranked_track)
 
             except queue.Empty:
                 pass
